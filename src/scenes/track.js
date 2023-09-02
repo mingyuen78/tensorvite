@@ -16,7 +16,7 @@ export default class Track extends Phaser.Scene {
         
     }
     update() {
-        this.handTrack.x = window._rightWrist.x;
+        this.handTrack.x = window.innerWidth - window._rightWrist.x;
         this.handTrack.y = window._rightWrist.y;
         
         

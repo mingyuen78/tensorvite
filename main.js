@@ -1,5 +1,9 @@
 let net;
 let video;
+let VIDEOMAX_WIDTH = window.innerWidth;
+let VIDEOMAX_HEIGHT = window.innerHeight;
+//let VIDEOMAX_WIDTH = 800;
+//let VIDEOMAX_HEIGHT = 600;
 window._rightWrist = 0;
 window._leftWrist = 0;
 const loadPoseNet = async () => {
@@ -32,15 +36,15 @@ const setupCamera = async () => {
   }
 
   const video = document.getElementById("video");
-  video.width = window.innerWidth;
-  video.height = window.innerHeight;
+  video.width = VIDEOMAX_WIDTH;
+  video.height = VIDEOMAX_HEIGHT;
 
   const stream = await navigator.mediaDevices.getUserMedia({
     audio: false,
     video: {
       facingMode: "user",
-      width: window.innerWidth,
-      height: window.innerHeight,
+      width: VIDEOMAX_WIDTH,
+      height: VIDEOMAX_HEIGHT,
     },
   });
   video.srcObject = stream;
@@ -51,9 +55,9 @@ const setupCamera = async () => {
 
 const detectPoseInRealTime = async (video) => {
   async function poseDetectionFrame() {
-    const imageScaleFactor = 1;
-    const outputStride = 32; //8/16/32
-    const flipHorizontal = true;
+    const imageScaleFactor = 0.5;
+    const outputStride = 16; //8/16/32
+    const flipHorizontal = false;
     let poses = [];
 
     const pose = await net.estimateSinglePose(
@@ -63,15 +67,15 @@ const detectPoseInRealTime = async (video) => {
           outputStride
     );
     poses.push(pose);
-    let minPoseConfidence = 0.35;
+    let minPoseConfidence = 0.1;
     let minPartConfidence = 0.5;
-
     poses.forEach(({ score, keypoints }) => {
       if (score >= minPoseConfidence) {
-          const leftWrist = keypoints.find((k) => k.part === "leftWrist");
-          const rightWrist = keypoints.find((k) => k.part === "rightWrist");
-          window._rightWrist = rightWrist.position;
-          
+        const rightWrist = keypoints.find((k) => k.part === "rightWrist");
+        const leftWrist = keypoints.find((k) => k.part === "leftWrist");
+        window._rightWrist = rightWrist.position; 
+        console.log(rightWrist.position);
+         
       }
     });
     requestAnimationFrame(poseDetectionFrame);
@@ -87,8 +91,8 @@ class GameMain {
   constructor() {
     let config = {
         type: Phaser.WEBGL,
-        width: window.innerWidth,
-        height: window.innerHeight,
+        width: VIDEOMAX_WIDTH,
+        height: VIDEOMAX_HEIGHT,
         parent:'phaserApp',
         physics: {
           default: 'arcade',

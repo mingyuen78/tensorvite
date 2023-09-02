@@ -16,6 +16,7 @@ body {
   height: auto; 
   background-size: cover;
   overflow: hidden;
+  transform:scaleX(-1);
 }
 
 .videowrapper {
@@ -24,7 +25,7 @@ body {
   position: absolute; 
   top: 0; 
   left: 0;
-  transform:scaleX(-1);
+  
 }
 
 .phaser {
